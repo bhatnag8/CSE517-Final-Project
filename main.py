@@ -9,6 +9,7 @@ SERVICE_RATE = 1.0  # Task service rate (tasks per unit time)
 NUM_SERVERS = 100  # Number of servers (m)
 BUFFER_SIZE = 0  # Buffer size (r)
 SIMULATION_TIME = 1000  # Total simulation time (time units)
+COV = 1.5  # Coefficient of Variation (for service times, e.g., CoV=1 means exponential)
 
 # Performance metrics
 task_arrival_count = 0
@@ -28,6 +29,14 @@ def task_arrivals(env, task_queue):
         print(f"Task arrived at time {env.now}")
 
 
+# Gamma distribution for service time with CoV
+def service_time_with_cov(cov, service_rate):
+    # We know CoV = 1 / sqrt(k), so to get a specific CoV, we adjust k
+    shape = 1 / (cov ** 2)  # Shape parameter for the Gamma distribution
+    scale = service_rate * cov  # Scale parameter for the Gamma distribution
+    return np.random.gamma(shape, scale)
+
+
 # Task Processing (M/G/m/m+r Queuing System)
 def task_processing(env, task_queue, num_servers, service_rate):
     global task_completion_count, blocked_tasks, total_response_time
@@ -40,8 +49,8 @@ def task_processing(env, task_queue, num_servers, service_rate):
         # Wait for a server to become available
         with server.request() as req:
             yield req
-            # Simulate task processing time (Gamma or Weibull distribution)
-            service_time = random.expovariate(service_rate)
+            # Simulate task processing time with Gamma distribution and CoV
+            service_time = service_time_with_cov(COV, service_rate)  # CoV is considered here
             yield env.timeout(service_time)
 
             # Calculate response time and update metrics
