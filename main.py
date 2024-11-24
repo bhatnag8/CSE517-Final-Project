@@ -147,7 +147,8 @@ def run_simulation():
                     queue.items.remove(task)  # Remove the task from the queue once it's processed
                     break
         env.run(until=env.now + 1)  # Run the event loop for 1 more time unit
-        # print("reaching=")
+
+        if task_arrival_count >= (SIMULATION_TIME * ARRIVAL_RATE * (1 - SERVICE_RATE)): break
 
     # Print final statistics
     print(f"\nSimulation Complete\nTasks Arrived: {task_arrival_count}")
