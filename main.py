@@ -2,12 +2,14 @@ import random
 import time
 import simpy
 
+
 # Constants for the experiment
 ARRIVAL_RATE = 85  # Task arrival rate (tasks per unit time)
 SERVICE_RATE = 0.01  # Task service rate (tasks per unit time)
 NUM_SERVERS = 100     # Number of servers (m)
-BUFFER_SIZE = 0    # Buffer size (r) - how many tasks the queue can store
+BUFFER_SIZE = 50    # Buffer size (r) - how many tasks the queue can store
 SIMULATION_TIME = 1000  # Total simulation time (time units)
+
 
 # Performance metrics
 task_arrival_count = 0  # Counter for tasks that arrived
@@ -155,9 +157,10 @@ def run_simulation():
     print(f"Tasks Completed: {task_completion_count}")
     print(f"Tasks Blocked: {blocked_tasks}")
     print(f"Tasks Blocked PROB: {blocked_tasks/task_arrival_count}")
-
+    print(f"Mean Number of Tasks: {task_completion_count/SIMULATION_TIME}")
     print(f"Average Response Time: {total_response_time / task_completion_count if task_completion_count > 0 else 0:.2f} seconds")
 
 
 if __name__ == "__main__":
     run_simulation()
+
